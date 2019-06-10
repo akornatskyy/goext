@@ -11,6 +11,7 @@ type StringValidatorBuilder interface {
 	Required() StringValidatorBuilder
 	Min(min int) StringValidatorBuilder
 	Max(max int) StringValidatorBuilder
+	Exactly(expected int) StringValidatorBuilder
 	Pattern(pattern string, message string) StringValidatorBuilder
 	Email() StringValidatorBuilder
 
@@ -80,6 +81,25 @@ func (v *stringValidator) Max(max int) StringValidatorBuilder {
 				Type:     "field",
 				Location: v.location,
 				Reason:   "max length",
+				Message:  msg,
+			})
+			return false
+		}
+		return true
+	})
+	return v
+}
+
+func (v *stringValidator) Exactly(expected int) StringValidatorBuilder {
+	msg := fmt.Sprintf(msgExactLength, expected)
+	v.validators = append(v.validators, func(e *errorstate.ErrorState, value string) bool {
+		l := len(value)
+		if l != 0 && l != expected {
+			e.Add(&errorstate.Detail{
+				Domain:   e.Domain,
+				Type:     "field",
+				Location: v.location,
+				Reason:   "exactly",
 				Message:  msg,
 			})
 			return false
