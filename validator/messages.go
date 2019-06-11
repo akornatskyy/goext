@@ -6,6 +6,7 @@ const (
 	msgMaxLength     = "Exceeds maximum length of %d."
 	msgExactLength   = "Required to be exactly %d characters in length."
 	msgEmail         = "Required to be a valid email address."
+	msgUUID          = "Expected to be a string in UUID format."
 
 	msgMinRange = "Required to be greater or equal to %d."
 	msgMaxRange = "Exceeds maximum allowed value of %d."

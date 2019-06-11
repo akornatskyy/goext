@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/akornatskyy/goext/errorstate"
+	"github.com/google/uuid"
 )
 
 type StringValidatorBuilder interface {
@@ -14,6 +15,7 @@ type StringValidatorBuilder interface {
 	Exactly(expected int) StringValidatorBuilder
 	Pattern(pattern string, message string) StringValidatorBuilder
 	Email() StringValidatorBuilder
+	UUID() StringValidatorBuilder
 
 	Build() StringValidator
 }
@@ -129,6 +131,27 @@ func (v *stringValidator) Pattern(pattern string, message string) StringValidato
 
 func (v *stringValidator) Email() StringValidatorBuilder {
 	return v.Pattern("^[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,4}$", msgEmail)
+}
+
+func (v *stringValidator) UUID() StringValidatorBuilder {
+	v.validators = append(v.validators, func(e *errorstate.ErrorState, value string) bool {
+		if value == "" {
+			return true
+		}
+		_, err := uuid.Parse(value)
+		if err != nil {
+			e.Add(&errorstate.Detail{
+				Domain:   e.Domain,
+				Type:     "field",
+				Location: v.location,
+				Reason:   "pattern",
+				Message:  msgUUID,
+			})
+			return false
+		}
+		return true
+	})
+	return v
 }
 
 func (v *stringValidator) Build() StringValidator {
