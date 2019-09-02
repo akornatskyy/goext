@@ -33,9 +33,8 @@ func Single(d *Detail) *ErrorState {
 }
 
 // Add detail related to this error.
-func (e *ErrorState) Add(d *Detail) *ErrorState {
+func (e *ErrorState) Add(d *Detail) {
 	e.Errors = append(e.Errors, d)
-	return e
 }
 
 // OrNil returns nil if there is no errors added to this state, otherwise

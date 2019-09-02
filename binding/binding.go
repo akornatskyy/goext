@@ -47,7 +47,7 @@ func Bind(m interface{}, values map[string][]string) error {
 			if e == nil {
 				e = &errorstate.ErrorState{}
 			}
-			e.Errors = append(e.Errors, &errorstate.Detail{
+			e.Add(&errorstate.Detail{
 				Domain:   "binding",
 				Type:     "field",
 				Location: name,
