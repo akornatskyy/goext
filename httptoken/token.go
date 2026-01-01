@@ -1,3 +1,4 @@
+// Package httptoken provides token-based authentication interfaces for HTTP handlers.
 package httptoken
 
 import (

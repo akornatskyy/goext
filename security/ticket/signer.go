@@ -52,7 +52,10 @@ func (s *Signer) Verify(src, signature []byte) error {
 }
 
 func (s *Signer) DecodeString(src string) ([]byte, error) {
-	b, _ := base64.RawURLEncoding.DecodeString(src)
+	b, err := base64.RawURLEncoding.DecodeString(src)
+	if err != nil {
+		return nil, err
+	}
 	h := hmac.New(s.h, s.key)
 	n := len(b) - h.Size()
 	if n < 0 {

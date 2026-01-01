@@ -1,17 +1,17 @@
 package ticket_test
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" // #nosec G505
 	"encoding/base64"
 	"fmt"
 
 	"github.com/akornatskyy/goext/security/ticket"
 )
 
-var key = []byte("secret")
+var signerKey = []byte("secret")
 
 func ExampleSigner_Signature() {
-	s := ticket.NewSigner(sha1.New, key)
+	s := ticket.NewSigner(sha1.New, signerKey)
 
 	signature, err := s.Signature([]byte("test"))
 	fmt.Println(base64.RawURLEncoding.EncodeToString(signature), err)
@@ -19,14 +19,14 @@ func ExampleSigner_Signature() {
 }
 
 func ExampleSigner_EncodeToString() {
-	s := ticket.NewSigner(sha1.New, key)
+	s := ticket.NewSigner(sha1.New, signerKey)
 
 	fmt.Println(s.EncodeToString([]byte("test")))
 	// Output: dGVzdBqjSVhe1-y9O5xIajAGfjlcpLNW <nil>
 }
 
 func ExampleSigner_Verify() {
-	s := ticket.NewSigner(sha1.New, key)
+	s := ticket.NewSigner(sha1.New, signerKey)
 
 	signature, err := base64.RawURLEncoding.DecodeString(
 		"GqNJWF7X7L07nEhqMAZ-OVyks1Y")
@@ -35,7 +35,7 @@ func ExampleSigner_Verify() {
 }
 
 func ExampleSigner_DecodeString() {
-	s := ticket.NewSigner(sha1.New, key)
+	s := ticket.NewSigner(sha1.New, signerKey)
 
 	text, err := s.DecodeString("dGVzdBqjSVhe1-y9O5xIajAGfjlcpLNW")
 	fmt.Println(string(text), err)

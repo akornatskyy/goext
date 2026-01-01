@@ -1,3 +1,4 @@
+// Package validator provides fluent validation builders for common data types.
 package validator
 
 const (

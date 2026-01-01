@@ -17,12 +17,12 @@ import (
 //
 //	package main
 //
-// 	var m struct {
+//	var m struct {
 //		Test string `binding:"test"`
-// 	}
+//	}
 //
-// 	values := map[string][]string{"test": {"hello"}}
-// 	err := binding.Bind(&m, values)
+//	values := map[string][]string{"test": {"hello"}}
+//	err := binding.Bind(&m, values)
 //
 // It supports the following types: string, int, uint, bool, time.Duration,
 // time.Time, slice.
@@ -78,8 +78,7 @@ func setValue(v reflect.Value, s string, tag reflect.StructTag) error {
 	case reflect.Int:
 		return setInt(v, s)
 	case reflect.Int64:
-		switch v.Interface().(type) {
-		case time.Duration:
+		if _, ok := v.Interface().(time.Duration); ok {
 			value, err := time.ParseDuration(s)
 			if err != nil {
 				return err
@@ -91,12 +90,14 @@ func setValue(v reflect.Value, s string, tag reflect.StructTag) error {
 	case reflect.Bool:
 		b, err := strconv.ParseBool(s)
 		if err != nil {
-			return err.(*strconv.NumError).Err
+			if numErr, ok := err.(*strconv.NumError); ok {
+				return numErr.Err
+			}
+			return err
 		}
 		v.SetBool(b)
 	case reflect.Struct:
-		switch v.Interface().(type) {
-		case time.Time:
+		if _, ok := v.Interface().(time.Time); ok {
 			return setTime(v, s, tag)
 		}
 	}
@@ -106,7 +107,10 @@ func setValue(v reflect.Value, s string, tag reflect.StructTag) error {
 func setInt(v reflect.Value, s string) error {
 	value, err := strconv.ParseInt(s, 10, 0)
 	if err != nil {
-		return err.(*strconv.NumError).Err
+		if numErr, ok := err.(*strconv.NumError); ok {
+			return numErr.Err
+		}
+		return err
 	}
 	v.SetInt(value)
 	return nil
@@ -115,7 +119,10 @@ func setInt(v reflect.Value, s string) error {
 func setUint(v reflect.Value, s string) error {
 	value, err := strconv.ParseUint(s, 10, 0)
 	if err != nil {
-		return err.(*strconv.NumError).Err
+		if numErr, ok := err.(*strconv.NumError); ok {
+			return numErr.Err
+		}
+		return err
 	}
 	v.SetUint(value)
 	return nil
@@ -136,8 +143,10 @@ func setTime(v reflect.Value, s string, tag reflect.StructTag) error {
 	}
 	tm, err := time.ParseInLocation(layout, s, loc)
 	if err != nil {
-		err := err.(*time.ParseError)
-		return errors.New("invalid time" + err.Message)
+		if parseErr, ok := err.(*time.ParseError); ok {
+			return errors.New("invalid time" + parseErr.Message)
+		}
+		return err
 	}
 	v.Set(reflect.ValueOf(tm))
 	return nil

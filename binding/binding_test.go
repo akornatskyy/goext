@@ -217,11 +217,12 @@ func TestBindSlice(t *testing.T) {
 		Test []string `binding:"test"`
 	}
 	for _, tt := range [][]string{{"x"}, {"1", "2", "3"}} {
+		ttCopy := tt
 		if err := binding.Bind(&m, map[string][]string{"test": tt}); err != nil {
 			t.Error()
 		}
 
-		if !reflect.DeepEqual(&m.Test, &tt) {
+		if !reflect.DeepEqual(&m.Test, &ttCopy) {
 			t.Errorf("no match")
 		}
 	}

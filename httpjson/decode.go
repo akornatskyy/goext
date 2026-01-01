@@ -1,3 +1,4 @@
+// Package httpjson provides JSON encoding/decoding utilities for HTTP handlers.
 package httpjson
 
 import (

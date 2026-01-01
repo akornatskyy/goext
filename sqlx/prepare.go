@@ -1,3 +1,4 @@
+// Package sqlx provides SQL utility functions for database operations.
 package sqlx
 
 import (

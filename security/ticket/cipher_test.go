@@ -6,10 +6,10 @@ import (
 	"github.com/akornatskyy/goext/security/ticket"
 )
 
-var key2 = []byte("1234567890123456")
+var cipherKey = []byte("1234567890123456")
 
 func Example_c_EncodeToString() {
-	c := ticket.NewCipher(key2)
+	c := ticket.NewCipher(cipherKey)
 
 	_, err := c.EncodeToString([]byte("test"))
 
@@ -18,7 +18,7 @@ func Example_c_EncodeToString() {
 }
 
 func Example_c_DecodeString() {
-	c := ticket.NewCipher(key2)
+	c := ticket.NewCipher(cipherKey)
 
 	b, err := c.DecodeString("4ADOyviA4Khjpe3VNCDaD6x5ceLzBNSGsVqBuhBbTpw")
 

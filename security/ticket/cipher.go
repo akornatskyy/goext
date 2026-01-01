@@ -1,3 +1,4 @@
+// Package ticket provides ticket signing and encryption utilities for secure token generation.
 package ticket
 
 import (
@@ -19,8 +20,14 @@ func NewCipher(key []byte) *c {
 }
 
 func (c *c) EncodeToString(src []byte) (string, error) {
-	b, _ := aes.NewCipher(c.key)
-	gcm, _ := cipher.NewGCM(b)
+	b, err := aes.NewCipher(c.key)
+	if err != nil {
+		return "", err
+	}
+	gcm, err := cipher.NewGCM(b)
+	if err != nil {
+		return "", err
+	}
 	nonce := make([]byte, gcm.NonceSize())
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
 		return "", err
@@ -30,9 +37,18 @@ func (c *c) EncodeToString(src []byte) (string, error) {
 }
 
 func (c *c) DecodeString(s string) ([]byte, error) {
-	data, _ := base64.RawURLEncoding.DecodeString(s)
-	b, _ := aes.NewCipher(c.key)
-	gcm, _ := cipher.NewGCM(b)
+	data, err := base64.RawURLEncoding.DecodeString(s)
+	if err != nil {
+		return nil, err
+	}
+	b, err := aes.NewCipher(c.key)
+	if err != nil {
+		return nil, err
+	}
+	gcm, err := cipher.NewGCM(b)
+	if err != nil {
+		return nil, err
+	}
 	n := gcm.NonceSize()
 	nonce, ciphertext := data[:n], data[n:]
 	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
